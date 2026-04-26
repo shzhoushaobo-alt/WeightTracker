@@ -1,0 +1,18 @@
+# Gradle / Android
+.gradle/
+**/build/
+local.properties
+*.iml
+.idea/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Vercel (optional; remove if you want to commit .vercel)
+.vercel
