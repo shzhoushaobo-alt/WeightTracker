@@ -245,7 +245,7 @@ function exportExcel() {
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.json_to_sheet(rows.length ? rows : [{ 日期: "", "体重(kg)": "", "体重(斤)": "" }]);
   XLSX.utils.book_append_sheet(wb, ws, "体重记录");
-  const name = `weight_records_${new Date().toISOString().slice(0, 19).replace(/[-:T]/g, "")}.xlsx`;
+  const name = `weight_records_${localDateTimeCompact()}.xlsx`;
   XLSX.writeFile(wb, name);
 }
 
@@ -309,11 +309,29 @@ function persistRecords() {
 function round2(n) { return Math.round(n * 100) / 100; }
 function kgToJin(kg) { return round2(kg * 2); }
 function jinToKg(jin) { return round2(jin / 2); }
-function todayStr() { return new Date().toISOString().slice(0, 10); }
+/** 本地日历日期 YYYY-MM-DD（避免 toISOString 用 UTC 导致国内凌晨错成“昨天”） */
+function formatLocalYmd(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function todayStr() {
+  return formatLocalYmd(new Date());
+}
+
 function dayOffsetStr(offset) {
   const d = new Date();
   d.setDate(d.getDate() + offset);
-  return d.toISOString().slice(0, 10);
+  return formatLocalYmd(d);
+}
+
+/** 本地时间文件名用 yyyyMMdd_HHmmss */
+function localDateTimeCompact() {
+  const d = new Date();
+  const p = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
 }
 function isDateValid(date) {
   return /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(new Date(date).getTime());
