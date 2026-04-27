@@ -1,116 +1,101 @@
 :root {
-  --bg: #f8fafc;
-  --surface: #ffffff;
-  --surface-soft: #f1f5f9;
-  --text: #0f172a;
-  --text-secondary: #64748b;
-  --line: #dbe5f1;
-  --primary: #2563eb;
-  --primary-strong: #1d4ed8;
-  --accent: #f97316;
-  --danger-soft: #fb923c;
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 18px;
-  --shadow-sm: 0 2px 10px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.1);
-  --shadow-lg: 0 14px 40px rgba(37, 99, 235, 0.28);
-  --ease: 200ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  --bg: #0b1020;
+  --bg-soft: #11182d;
+  --surface: #121a31;
+  --surface-2: #18223d;
+  --line: #2b3656;
+  --text: #eef2ff;
+  --text-secondary: #aab4d4;
+  --primary: #7c9cff;
+  --primary-strong: #5f84ff;
+  --accent: #48d6b0;
+  --danger: #ff9f7a;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --shadow-card: 0 14px 34px rgba(5, 10, 25, 0.35);
+  --shadow-fab: 0 16px 38px rgba(95, 132, 255, 0.45);
+  --ease: 180ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 * { box-sizing: border-box; }
-
 html, body { height: 100%; }
 
 body {
   margin: 0;
-  font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Noto Sans";
+  font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Noto Sans", Arial;
   color: var(--text);
   background:
-    radial-gradient(1000px 420px at 100% -10%, #dbeafe 0%, transparent 55%),
-    radial-gradient(860px 360px at 0% -8%, #ffedd5 0%, transparent 48%),
-    var(--bg);
+    radial-gradient(1000px 460px at 100% -12%, rgba(124, 156, 255, 0.22), transparent 60%),
+    radial-gradient(920px 420px at -8% -14%, rgba(72, 214, 176, 0.14), transparent 52%),
+    linear-gradient(180deg, #0a0f1f 0%, var(--bg) 100%);
 }
 
-button, input {
-  font: inherit;
-}
+button, input { font: inherit; }
 
 button {
-  transition: transform var(--ease), box-shadow var(--ease), background-color var(--ease), border-color var(--ease), opacity var(--ease);
+  transition: transform var(--ease), box-shadow var(--ease), border-color var(--ease), background-color var(--ease), opacity var(--ease);
 }
 
 button:focus-visible, input:focus-visible, .import-label:focus-within {
-  outline: 3px solid rgba(37, 99, 235, 0.25);
+  outline: 3px solid rgba(124, 156, 255, 0.4);
   outline-offset: 2px;
 }
 
 .app {
-  max-width: 900px;
+  max-width: 920px;
   margin: 0 auto;
-  padding: 28px 16px 104px;
+  padding: 24px 16px 108px;
 }
 
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
 .topbar h1 {
   margin: 0;
-  font-size: clamp(24px, 2.8vw, 30px);
+  font-size: clamp(24px, 2.7vw, 32px);
   letter-spacing: -0.02em;
 }
 
 .top-actions {
   display: flex;
-  gap: 8px;
   flex-wrap: wrap;
+  gap: 8px;
   align-items: center;
 }
 
 .chip {
   border: 1px solid var(--line);
-  background: var(--surface);
+  background: linear-gradient(180deg, #17213b 0%, #141d35 100%);
   color: var(--text);
   border-radius: 999px;
   padding: 8px 14px;
   cursor: pointer;
   font-weight: 600;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .chip:hover {
   transform: translateY(-1px);
-  border-color: #bfdbfe;
+  border-color: #4f6298;
 }
 
 .chip:active {
   transform: translateY(0);
 }
 
-.chip.active {
-  background: linear-gradient(180deg, #3b82f6 0%, var(--primary) 100%);
-  color: #fff;
-  border-color: var(--primary);
-  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.28);
-}
-
 .card {
-  background: rgba(255, 255, 255, 0.92);
+  background: linear-gradient(180deg, rgba(24, 34, 61, 0.9) 0%, rgba(18, 26, 49, 0.92) 100%);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   padding: 16px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card);
   margin-bottom: 12px;
-}
-
-.card h2 {
-  margin: 0 0 12px;
-  font-size: 18px;
-  letter-spacing: -0.01em;
 }
 
 .calendar-head {
@@ -118,13 +103,14 @@ button:focus-visible, input:focus-visible, .import-label:focus-within {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .calendar-head h2 {
   margin: 0;
   font-size: 18px;
   font-weight: 700;
+  color: var(--text);
 }
 
 .weekday-row {
@@ -149,10 +135,10 @@ button:focus-visible, input:focus-visible, .import-label:focus-within {
 }
 
 .day-cell {
-  min-height: 72px;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  background: #fff;
+  min-height: 78px;
+  border: 1px solid #2a365a;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #1b2644 0%, #15203a 100%);
   padding: 8px 6px;
   display: flex;
   flex-direction: column;
@@ -162,36 +148,37 @@ button:focus-visible, input:focus-visible, .import-label:focus-within {
 }
 
 .day-cell:hover {
-  border-color: #bfdbfe;
+  border-color: #5f84ff;
   transform: translateY(-1px);
 }
 
 .day-cell .day-num {
   font-size: 13px;
   font-weight: 700;
+  color: var(--text);
   line-height: 1.2;
 }
 
 .day-cell .day-weight {
-  margin-top: 6px;
+  margin-top: 7px;
   font-size: 12px;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--accent);
   min-height: 14px;
 }
 
 .day-cell.today {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.18) inset;
+  border-color: var(--primary-strong);
+  box-shadow: 0 0 0 1px rgba(95, 132, 255, 0.35) inset;
 }
 
 .day-cell.has-record {
-  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+  background: linear-gradient(180deg, #1f2c4f 0%, #16233f 100%);
 }
 
 .day-cell.future {
   cursor: not-allowed;
-  opacity: 0.55;
+  opacity: 0.42;
 }
 
 .empty-cell {
@@ -205,32 +192,32 @@ button:focus-visible, input:focus-visible, .import-label:focus-within {
   left: 50%;
   bottom: 20px;
   transform: translateX(-50%);
-  background: linear-gradient(180deg, #3b82f6 0%, var(--primary) 100%);
-  color: #fff;
   border: none;
   border-radius: 999px;
   padding: 14px 26px;
   cursor: pointer;
-  box-shadow: var(--shadow-lg);
+  color: #fff;
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.01em;
+  background: linear-gradient(180deg, #7c9cff 0%, #5f84ff 100%);
+  box-shadow: var(--shadow-fab);
 }
 
 .fab:hover { transform: translateX(-50%) translateY(-1px); }
 .fab:active { transform: translateX(-50%); }
 
 dialog {
-  border: 1px solid var(--line);
+  border: 1px solid #2f3d64;
   border-radius: 20px;
   width: min(430px, 92vw);
   padding: 0;
-  box-shadow: var(--shadow-md);
-  background: rgba(255, 255, 255, 0.98);
+  background: linear-gradient(180deg, #1a2542 0%, #111a31 100%);
+  box-shadow: 0 22px 46px rgba(2, 7, 20, 0.55);
 }
 
 dialog::backdrop {
-  background: rgba(15, 23, 42, 0.48);
+  background: rgba(7, 12, 27, 0.68);
   backdrop-filter: blur(2px);
 }
 
@@ -271,9 +258,9 @@ dialog label {
 }
 
 .inline-unit-btn {
-  border: 1px solid #bfdbfe;
-  background: #eff6ff;
-  color: var(--primary-strong);
+  border: 1px solid #3d538e;
+  background: #25345f;
+  color: #d5deff;
   border-radius: 999px;
   padding: 5px 10px;
   font-size: 12px;
@@ -283,24 +270,22 @@ dialog label {
 
 .inline-unit-btn:hover {
   transform: translateY(-1px);
-  background: #dbeafe;
+  background: #2c4077;
 }
 
-.inline-unit-btn:active {
-  transform: translateY(0);
-}
+.inline-unit-btn:active { transform: translateY(0); }
 
 dialog input[type="date"], dialog input[type="number"] {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
+  border: 1px solid #34456f;
+  border-radius: var(--radius-sm);
   color: var(--text);
-  background: #fff;
+  background: #0f1830;
 }
 
 dialog input[type="date"]:hover, dialog input[type="number"]:hover {
-  border-color: #bfdbfe;
+  border-color: #4c66a7;
 }
 
 small {
@@ -316,7 +301,7 @@ small {
 
 .quick-row button {
   border: none;
-  border-radius: 11px;
+  border-radius: var(--radius-sm);
   padding: 10px;
   cursor: pointer;
   font-weight: 700;
@@ -324,11 +309,11 @@ small {
 }
 
 .quick-row.minus button {
-  background: linear-gradient(180deg, #fdba74 0%, var(--danger-soft) 100%);
+  background: linear-gradient(180deg, #ffb08f 0%, #ff8f66 100%);
 }
 
 .quick-row.plus button {
-  background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%);
+  background: linear-gradient(180deg, #7ea4ff 0%, #5e84ff 100%);
 }
 
 .quick-row button:hover {
@@ -345,17 +330,18 @@ menu {
 }
 
 menu button, .import-label, #downloadTemplateBtn, #exportBtn {
-  border: 1px solid var(--line);
-  background: #fff;
-  border-radius: 12px;
+  border: 1px solid #32436f;
+  background: #15213e;
+  color: var(--text);
+  border-radius: var(--radius-sm);
   padding: 9px 12px;
   cursor: pointer;
 }
 
 #saveRecordBtn, #downloadTemplateBtn, #exportBtn {
-  background: linear-gradient(180deg, #3b82f6 0%, var(--primary) 100%);
+  background: linear-gradient(180deg, #7c9cff 0%, #5f84ff 100%);
+  border-color: #5f84ff;
   color: #fff;
-  border-color: var(--primary);
   font-weight: 700;
 }
 
@@ -377,15 +363,15 @@ menu button, .import-label, #downloadTemplateBtn, #exportBtn {
 }
 
 @media (max-width: 640px) {
-  .app { padding-top: 14px; padding-bottom: 110px; }
+  .app { padding-top: 14px; padding-bottom: 112px; }
   .topbar { align-items: flex-start; flex-direction: column; gap: 8px; }
   .top-actions { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
   .chip { padding: 8px 12px; }
-  .card { border-radius: 14px; padding: 14px 12px; }
+  .card { border-radius: 16px; padding: 14px 12px; }
   .calendar-head .chip { padding: 8px 10px; font-size: 13px; }
   .weekday-row { gap: 4px; }
   .calendar-grid { gap: 4px; }
-  .day-cell { min-height: 64px; padding: 7px 4px; border-radius: 10px; }
+  .day-cell { min-height: 66px; padding: 7px 4px; border-radius: 10px; }
   .day-cell .day-num { font-size: 12px; }
   .day-cell .day-weight { font-size: 11px; }
   dialog { width: 96vw; border-radius: 16px; }
@@ -393,7 +379,7 @@ menu button, .import-label, #downloadTemplateBtn, #exportBtn {
   .weight-field .field-head { gap: 8px; }
   .inline-unit-btn { padding: 5px 9px; font-size: 12px; }
   .quick-row button { min-height: 40px; }
-  .fab { width: calc(100vw - 28px); max-width: 380px; text-align: center; }
+  .fab { width: calc(100vw - 28px); max-width: 390px; text-align: center; }
   menu { justify-content: stretch; }
   menu button { flex: 1; }
 }

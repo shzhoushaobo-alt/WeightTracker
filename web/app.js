@@ -94,8 +94,10 @@ function initDateInputs() {
 function openAddDialog(dateStr) {
   // 每次打开添加页，默认单位与首页单位一致
   state.addUnit = state.homeUnit;
+  const existing = state.records.find((r) => r.date === dateStr);
   const latest = state.records[state.records.length - 1];
-  const defaultKg = latest ? latest.weightKg : 60.0; // 120斤
+  // 优先回填该日期已有体重，用于编辑；否则使用最近一次，首次为 120斤(60kg)
+  const defaultKg = existing?.weightKg ?? latest?.weightKg ?? 60.0;
   const defaultDisplay = state.addUnit === UNIT.KG ? defaultKg : kgToJin(defaultKg);
   const picked = dateStr && dateStr <= todayStr() ? dateStr : todayStr();
   els.recordDate.value = picked;
