@@ -8,7 +8,6 @@
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="icon" href="./icons/icon-192.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="./styles.css" />
-  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script defer src="./app.js"></script>
 </head>
@@ -22,37 +21,16 @@
       </div>
     </header>
 
-    <section class="filters">
-      <button class="chip active" data-range="7">近7天</button>
-      <button class="chip" data-range="30">近30天</button>
-      <label class="date-label">
-        开始
-        <input id="startDate" type="date" />
-      </label>
-      <label class="date-label">
-        结束
-        <input id="endDate" type="date" />
-      </label>
-      <button id="applyCustomBtn" class="chip">应用自定义</button>
-    </section>
-
     <section class="card">
-      <h2>趋势图</h2>
-      <canvas id="weightChart" height="120"></canvas>
-    </section>
-
-    <section class="card">
-      <h2 id="tableTitle">记录明细（公斤）</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>日期</th>
-            <th>体重</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-      <p id="emptyState" class="empty">该时间段暂无记录</p>
+      <div class="calendar-head">
+        <button id="prevMonthBtn" class="chip" type="button">上个月</button>
+        <h2 id="monthTitle">2026年04月</h2>
+        <button id="nextMonthBtn" class="chip" type="button">下个月</button>
+      </div>
+      <div class="weekday-row">
+        <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+      </div>
+      <div id="calendarGrid" class="calendar-grid"></div>
     </section>
   </div>
 
@@ -96,7 +74,7 @@
     <form method="dialog">
       <h3>导入 / 导出</h3>
       <button type="button" id="downloadTemplateBtn">下载导入模板（Excel）</button>
-      <button type="button" id="exportBtn">导出当前筛选（Excel）</button>
+      <button type="button" id="exportBtn">导出当前月份（Excel）</button>
       <label class="import-label">
         导入 Excel
         <input id="importInput" type="file" accept=".xlsx,.xls" />

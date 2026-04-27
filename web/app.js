@@ -5,20 +5,17 @@ const UNIT = { KG: "kg", JIN: "jin" };
 const state = {
   homeUnit: localStorage.getItem(UNIT_KEY) || UNIT.KG,
   addUnit: localStorage.getItem(UNIT_KEY) || UNIT.KG,
-  rangeMode: 7,
+  currentMonth: firstDayOfMonth(new Date()),
   records: loadRecords(),
-  chart: null,
 };
 
 const els = {
   toggleUnitBtn: document.getElementById("toggleUnitBtn"),
   menuBtn: document.getElementById("menuBtn"),
-  startDate: document.getElementById("startDate"),
-  endDate: document.getElementById("endDate"),
-  applyCustomBtn: document.getElementById("applyCustomBtn"),
-  tableBody: document.getElementById("tableBody"),
-  tableTitle: document.getElementById("tableTitle"),
-  emptyState: document.getElementById("emptyState"),
+  monthTitle: document.getElementById("monthTitle"),
+  prevMonthBtn: document.getElementById("prevMonthBtn"),
+  nextMonthBtn: document.getElementById("nextMonthBtn"),
+  calendarGrid: document.getElementById("calendarGrid"),
   addBtn: document.getElementById("addBtn"),
   addDialog: document.getElementById("addDialog"),
   recordDate: document.getElementById("recordDate"),
@@ -49,29 +46,22 @@ function registerServiceWorker() {
 }
 
 function bindEvents() {
-  document.querySelectorAll("[data-range]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      state.rangeMode = Number(btn.dataset.range);
-      document.querySelectorAll("[data-range]").forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      render();
-    });
-  });
-
   els.toggleUnitBtn.addEventListener("click", () => {
     const next = state.homeUnit === UNIT.KG ? UNIT.JIN : UNIT.KG;
     setHomeUnit(next);
   });
 
-  els.applyCustomBtn.addEventListener("click", () => {
-    if (!els.startDate.value || !els.endDate.value) return alert("请先选择开始和结束日期");
-    if (els.startDate.value > els.endDate.value) return alert("开始日期不能晚于结束日期");
-    state.rangeMode = "custom";
-    document.querySelectorAll("[data-range]").forEach((b) => b.classList.remove("active"));
-    render();
+  els.prevMonthBtn.addEventListener("click", () => {
+    state.currentMonth = addMonth(state.currentMonth, -1);
+    renderCalendar();
   });
 
-  els.addBtn.addEventListener("click", openAddDialog);
+  els.nextMonthBtn.addEventListener("click", () => {
+    state.currentMonth = addMonth(state.currentMonth, 1);
+    renderCalendar();
+  });
+
+  els.addBtn.addEventListener("click", () => openAddDialog(todayStr()));
   els.menuBtn.addEventListener("click", () => els.menuDialog.showModal());
   els.addUnitToggleBtn.addEventListener("click", () => {
     const next = state.addUnit === UNIT.KG ? UNIT.JIN : UNIT.KG;
@@ -98,23 +88,18 @@ function bindEvents() {
 }
 
 function initDateInputs() {
-  const t = todayStr();
-  els.startDate.max = t;
-  els.endDate.max = t;
-  els.recordDate.max = t;
-  els.endDate.value = t;
-  els.startDate.value = dayOffsetStr(-6);
+  els.recordDate.max = todayStr();
 }
 
-function openAddDialog() {
+function openAddDialog(dateStr) {
   // 每次打开添加页，默认单位与首页单位一致
   state.addUnit = state.homeUnit;
-  const t = todayStr();
   const latest = state.records[state.records.length - 1];
   const defaultKg = latest ? latest.weightKg : 60.0; // 120斤
   const defaultDisplay = state.addUnit === UNIT.KG ? defaultKg : kgToJin(defaultKg);
-  els.recordDate.value = t;
-  els.recordDate.max = t;
+  const picked = dateStr && dateStr <= todayStr() ? dateStr : todayStr();
+  els.recordDate.value = picked;
+  els.recordDate.max = todayStr();
   els.recordWeight.value = defaultDisplay.toFixed(2);
   updateAddDialogUnitUI();
   els.addDialog.showModal();
@@ -145,11 +130,8 @@ function saveRecord() {
 function render() {
   const unitText = state.homeUnit === UNIT.KG ? "公斤" : "斤";
   els.toggleUnitBtn.textContent = `单位：${unitText}`;
-  els.tableTitle.textContent = `记录明细（${unitText}）`;
   updateAddDialogUnitUI();
-  const filtered = filteredRecords();
-  renderTable(filtered);
-  renderChart(filtered);
+  renderCalendar();
 }
 
 function setHomeUnit(nextUnit) {
@@ -180,64 +162,64 @@ function updateAddDialogUnitUI() {
   els.addUnitToggleBtn.textContent = state.addUnit === UNIT.KG ? "切换到斤" : "切换到公斤";
 }
 
-function filteredRecords() {
-  const records = [...state.records];
-  if (state.rangeMode === 7 || state.rangeMode === 30) {
-    const start = dayOffsetStr(-(state.rangeMode - 1));
-    const end = todayStr();
-    return records.filter((r) => r.date >= start && r.date <= end);
+function renderCalendar() {
+  const y = state.currentMonth.getFullYear();
+  const m = state.currentMonth.getMonth();
+  els.monthTitle.textContent = `${y}年${String(m + 1).padStart(2, "0")}月`;
+
+  const map = new Map(state.records.map((r) => [r.date, r.weightKg]));
+  els.calendarGrid.innerHTML = "";
+
+  const monthStart = new Date(y, m, 1);
+  const monthEnd = new Date(y, m + 1, 0);
+  const daysInMonth = monthEnd.getDate();
+  const firstWeekday = (monthStart.getDay() + 6) % 7;
+
+  for (let i = 0; i < firstWeekday; i += 1) {
+    const empty = document.createElement("div");
+    empty.className = "day-cell empty-cell";
+    els.calendarGrid.appendChild(empty);
   }
-  const start = els.startDate.value;
-  const end = els.endDate.value;
-  return records.filter((r) => r.date >= start && r.date <= end);
+
+  const today = todayStr();
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    const date = formatLocalYmd(new Date(y, m, day));
+    const weightKg = map.get(date);
+    const hasRecord = Number.isFinite(weightKg);
+    const isToday = date === today;
+    const isFuture = date > today;
+
+    const cell = document.createElement("button");
+    cell.type = "button";
+    cell.className = "day-cell";
+    if (isToday) cell.classList.add("today");
+    if (hasRecord) cell.classList.add("has-record");
+    if (isFuture) cell.classList.add("future");
+    cell.disabled = isFuture;
+
+    const value = hasRecord
+      ? (state.homeUnit === UNIT.KG ? weightKg : kgToJin(weightKg)).toFixed(2)
+      : "";
+
+    cell.innerHTML = `
+      <span class="day-num">${day}</span>
+      <span class="day-weight">${value}</span>
+    `;
+    cell.addEventListener("click", () => openAddDialog(date));
+
+    els.calendarGrid.appendChild(cell);
+  }
 }
 
-function renderTable(records) {
-  els.tableBody.innerHTML = "";
-  if (!records.length) {
-    els.emptyState.style.display = "block";
-    return;
-  }
-  els.emptyState.style.display = "none";
-  [...records].reverse().forEach((r) => {
-    const v = state.homeUnit === UNIT.KG ? r.weightKg : kgToJin(r.weightKg);
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${r.date}</td><td>${v.toFixed(2)}</td>`;
-    els.tableBody.appendChild(tr);
-  });
-}
-
-function renderChart(records) {
-  const labels = records.map((r) => r.date.slice(5));
-  const data = records.map((r) => (state.homeUnit === UNIT.KG ? r.weightKg : kgToJin(r.weightKg)));
-  const ctx = document.getElementById("weightChart");
-
-  if (state.chart) state.chart.destroy();
-  state.chart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels,
-      datasets: [{
-        label: `体重(${state.homeUnit === UNIT.KG ? "公斤" : "斤"})`,
-        data,
-        borderColor: "#2563eb",
-        backgroundColor: "rgba(37,99,235,.15)",
-        borderWidth: 3,
-        fill: true,
-        tension: 0.35,
-        pointRadius: 3.5,
-      }],
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: { y: { ticks: { precision: 2 } } },
-    },
-  });
+function visibleMonthRecords() {
+  const y = state.currentMonth.getFullYear();
+  const m = state.currentMonth.getMonth();
+  const monthPrefix = `${y}-${String(m + 1).padStart(2, "0")}`;
+  return state.records.filter((r) => r.date.startsWith(monthPrefix));
 }
 
 function exportExcel() {
-  const rows = filteredRecords().map((r) => ({
+  const rows = visibleMonthRecords().map((r) => ({
     日期: r.date,
     "体重(kg)": round2(r.weightKg),
     "体重(斤)": round2(kgToJin(r.weightKg)),
@@ -309,6 +291,8 @@ function persistRecords() {
 function round2(n) { return Math.round(n * 100) / 100; }
 function kgToJin(kg) { return round2(kg * 2); }
 function jinToKg(jin) { return round2(jin / 2); }
+function firstDayOfMonth(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
+function addMonth(base, offset) { return new Date(base.getFullYear(), base.getMonth() + offset, 1); }
 /** 本地日历日期 YYYY-MM-DD（避免 toISOString 用 UTC 导致国内凌晨错成“昨天”） */
 function formatLocalYmd(d) {
   const y = d.getFullYear();
@@ -319,12 +303,6 @@ function formatLocalYmd(d) {
 
 function todayStr() {
   return formatLocalYmd(new Date());
-}
-
-function dayOffsetStr(offset) {
-  const d = new Date();
-  d.setDate(d.getDate() + offset);
-  return formatLocalYmd(d);
 }
 
 /** 本地时间文件名用 yyyyMMdd_HHmmss */
