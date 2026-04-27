@@ -3,8 +3,9 @@ const UNIT_KEY = "weight_display_unit_v1";
 const UNIT = { KG: "kg", JIN: "jin" };
 
 const state = {
-  homeUnit: localStorage.getItem(UNIT_KEY) || UNIT.KG,
-  addUnit: localStorage.getItem(UNIT_KEY) || UNIT.KG,
+  // 全局默认单位：斤；用户切换后按本地存储恢复
+  homeUnit: localStorage.getItem(UNIT_KEY) || UNIT.JIN,
+  addUnit: localStorage.getItem(UNIT_KEY) || UNIT.JIN,
   currentMonth: firstDayOfMonth(new Date()),
   records: loadRecords(),
 };
